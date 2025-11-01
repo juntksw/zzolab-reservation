@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZZO LAB - Restaurant Reservation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6c757d;
+            --accent-color: #c9a961;
+            --text-dark: #2c3e50;
+            --text-light: #ffffff;
+            --background-light: #f8f9fa;
+            --border-color: #dee2e6;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background-light);
+        }
+
+        header {
+            background: var(--primary-color);
+            color: var(--text-light);
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .restaurant-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 2px solid var(--text-light);
+            color: var(--text-light);
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover,
+        .lang-btn.active {
+            background: var(--text-light);
+            color: var(--primary-color);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        .reservation-section {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .time-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .time-slot-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .time-slot {
+            padding: 12px;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .time-slot:hover:not(.disabled) {
+            border-color: var(--accent-color);
+            background: #fff8e1;
+        }
+
+        .time-slot.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .time-slot.disabled {
+            background: #f5f5f5;
+            color: #ccc;
+            cursor: not-allowed;
+            border-color: #e0e0e0;
+        }
+
+        .specific-time-container {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .specific-time-container.show {
+            display: block;
+        }
+
+        .time-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .time-option {
+            padding: 10px;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .time-option:hover {
+            border-color: var(--accent-color);
+            background: #fff8e1;
+        }
+
+        .time-option.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            background: #b8954d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(201, 169, 97, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .restaurant-info {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        .monday-warning {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .monday-warning.show {
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .restaurant-name {
+                font-size: 1.5rem;
+            }
+
+            .language-selector {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .reservation-section {
+                padding: 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .time-selection {
+                grid-template-columns: 1fr;
+            }
+
+            .time-options {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .reservation-section {
+                padding: 1rem;
+            }
+
+            .time-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1 class="restaurant-name">ZZO LAB</h1>
+            <div class="language-selector">
+                <button class="lang-btn active" data-lang="en">English</button>
+                <button class="lang-btn" data-lang="ko">한국어</button>
+                <button class="lang-btn" data-lang="zh">中文</button>
+                <button class="lang-btn" data-lang="ja">日本語</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="alert alert-success" id="successAlert"></div>
+        <div class="alert alert-error" id="errorAlert"></div>
+
+        <section class="reservation-section">
+            <h2 class="section-title" data-i18n="reservation_title">Make a Reservation</h2>
+            <p class="section-subtitle" data-i18n="reservation_subtitle">Reserve your table at ZZO LAB</p>
+
+            <form id="reservationForm">
+                <div class="form-group">
+                    <label for="name" data-i18n="name_label">Name *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone" data-i18n="phone_label">Phone Number *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email" data-i18n="email_label">Email</label>
+                    <input type="email" id="email" name="email">
+                </div>
+
+                <div class="form-group">
+                    <label for="date" data-i18n="date_label">Date *</label>
+                    <input type="date" id="date" name="date" required>
+                    <div class="monday-warning" id="mondayWarning" data-i18n="monday_warning">
+                        We are closed on Mondays. Please select another day.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="time_label">Time *</label>
+                    <div class="time-selection">
+                        <div class="time-slot-group">
+                            <div class="time-slot" data-time-type="lunch" data-i18n="lunch_time">
+                                Lunch (8:30 AM - 1:00 PM)
+                            </div>
+                        </div>
+                        <div class="time-slot-group">
+                            <div class="time-slot" data-time-type="dinner" data-i18n="dinner_time">
+                                Dinner (5:30 PM - 8:30 PM)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="specific-time-container" id="lunchTimeContainer">
+                        <label data-i18n="select_lunch_time">Select Lunch Time:</label>
+                        <div class="time-options" id="lunchTimeOptions"></div>
+                    </div>
+
+                    <div class="specific-time-container" id="dinnerTimeContainer">
+                        <label data-i18n="select_dinner_time">Select Dinner Time:</label>
+                        <div class="time-options" id="dinnerTimeOptions"></div>
+                    </div>
+
+                    <input type="hidden" id="selectedTime" name="time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="guests" data-i18n="guests_label">Number of Guests *</label>
+                    <input type="number" id="guests" name="guests" min="1" max="20" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="vipRoom" data-i18n="vip_label">VIP Room</label>
+                    <select id="vipRoom" name="vipRoom">
+                        <option value="no" data-i18n="vip_no">No</option>
+                        <option value="yes" data-i18n="vip_yes">Yes (Subject to availability)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes" data-i18n="notes_label">Special Requests</label>
+                    <textarea id="notes" name="notes" rows="4" data-i18n-placeholder="notes_placeholder"></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn" data-i18n="submit_btn">Confirm Reservation</button>
+            </form>
+        </section>
+
+        <section class="restaurant-info">
+            <h2 class="section-title" data-i18n="info_title">Restaurant Information</h2>
+            <div class="info-item">
+                <span class="info-label" data-i18n="info_name">Restaurant Name:</span>
+                <span>ZZO LAB</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label" data-i18n="info_capacity">Capacity:</span>
+                <span data-i18n="info_capacity_value">20 seats (6 tables + 1 VIP room)</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label" data-i18n="info_hours">Business Hours:</span>
+                <div>
+                    <div data-i18n="info_lunch">Lunch: 8:30 AM - 2:00 PM (Last order 1:30 PM)</div>
+                    <div data-i18n="info_dinner">Dinner: 5:30 PM - 10:00 PM (Last order 9:30 PM)</div>
+                </div>
+            </div>
+            <div class="info-item">
+                <span class="info-label" data-i18n="info_closed">Closed:</span>
+                <span data-i18n="info_closed_value">Every Monday</span>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 ZZO LAB. <span data-i18n="footer_rights">All rights reserved.</span></p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // EmailJS initialization
+        (function() {
+            emailjs.init("b-GTAO_7NZpALzmfW");
+        })();
+
+        // Language translations
+        const translations = {
+            en: {
+                reservation_title: "Make a Reservation",
+                reservation_subtitle: "Reserve your table at ZZO LAB",
+                name_label: "Name *",
+                phone_label: "Phone Number *",
+                email_label: "Email",
+                date_label: "Date *",
+                time_label: "Time *",
+                lunch_time: "Lunch (8:30 AM - 1:00 PM)",
+                dinner_time: "Dinner (5:30 PM - 8:30 PM)",
+                select_lunch_time: "Select Lunch Time:",
+                select_dinner_time: "Select Dinner Time:",
+                guests_label: "Number of Guests *",
+                vip_label: "VIP Room",
+                vip_no: "No",
+                vip_yes: "Yes (Subject to availability)",
+                notes_label: "Special Requests",
+                notes_placeholder: "Please let us know if you have any special requests or dietary restrictions",
+                submit_btn: "Confirm Reservation",
+                info_title: "Restaurant Information",
+                info_name: "Restaurant Name:",
+                info_capacity: "Capacity:",
+                info_capacity_value: "20 seats (6 tables + 1 VIP room)",
+                info_hours: "Business Hours:",
+                info_lunch: "Lunch: 8:30 AM - 2:00 PM (Last order 1:30 PM)",
+                info_dinner: "Dinner: 5:30 PM - 10:00 PM (Last order 9:30 PM)",
+                info_closed: "Closed:",
+                info_closed_value: "Every Monday",
+                footer_rights: "All rights reserved.",
+                success_message: "Reservation submitted successfully! We will contact you soon to confirm.",
+                error_message: "Failed to submit reservation. Please try again or contact us directly.",
+                monday_warning: "We are closed on Mondays. Please select another day.",
+                select_time_first: "Please select lunch or dinner first",
+                fill_required: "Please fill in all required fields"
+            },
+            ko: {
+                reservation_title: "예약하기",
+                reservation_subtitle: "ZZO LAB 테이블 예약",
+                name_label: "이름 *",
+                phone_label: "전화번호 *",
+                email_label: "이메일",
+                date_label: "날짜 *",
+                time_label: "시간 *",
+                lunch_time: "점심 (오전 8:30 - 오후 1:00)",
+                dinner_time: "저녁 (오후 5:30 - 오후 8:30)",
+                select_lunch_time: "점심 시간 선택:",
+                select_dinner_time: "저녁 시간 선택:",
+                guests_label: "인원 수 *",
+                vip_label: "VIP룸",
+                vip_no: "아니오",
+                vip_yes: "예 (가능 여부 확인 필요)",
+                notes_label: "특별 요청사항",
+                notes_placeholder: "특별한 요청사항이나 식이 제한이 있으시면 알려주세요",
+                submit_btn: "예약 확인",
+                info_title: "레스토랑 정보",
+                info_name: "레스토랑명:",
+                info_capacity: "수용 인원:",
+                info_capacity_value: "20석 (테이블 6개 + VIP룸 1개)",
+                info_hours: "영업시간:",
+                info_lunch: "점심: 오전 8:30 - 오후 2:00 (라스트오더 오후 1:30)",
+                info_dinner: "저녁: 오후 5:30 - 오후 10:00 (라스트오더 오후 9:30)",
+                info_closed: "휴무일:",
+                info_closed_value: "매주 월요일",
+                footer_rights: "모든 권리 보유.",
+                success_message: "예약이 성공적으로 접수되었습니다! 곧 확인 연락드리겠습니다.",
+                error_message: "예약 접수에 실패했습니다. 다시 시도하거나 직접 연락 주세요.",
+                monday_warning: "월요일은 휴무입니다. 다른 날짜를 선택해주세요.",
+                select_time_first: "먼저 점심 또는 저녁을 선택해주세요",
+                fill_required: "모든 필수 항목을 입력해주세요"
+            },
+            zh: {
+                reservation_title: "预约",
+                reservation_subtitle: "在 ZZO LAB 预订您的餐桌",
+                name_label: "姓名 *",
+                phone_label: "电话号码 *",
+                email_label: "电子邮箱",
+                date_label: "日期 *",
+                time_label: "时间 *",
+                lunch_time: "午餐 (上午8:30 - 下午1:00)",
+                dinner_time: "晚餐 (下午5:30 - 下午8:30)",
+                select_lunch_time: "选择午餐时间:",
+                select_dinner_time: "选择晚餐时间:",
+                guests_label: "用餐人数 *",
+                vip_label: "VIP包厢",
+                vip_no: "否",
+                vip_yes: "是(需确认)",
+                notes_label: "特殊要求",
+                notes_placeholder: "如有特殊要求或饮食限制,请告知我们",
+                submit_btn: "确认预订",
+                info_title: "餐厅信息",
+                info_name: "餐厅名称:",
+                info_capacity: "容纳人数:",
+                info_capacity_value: "20个座位(6张桌子 + 1个VIP包厢)",
+                info_hours: "营业时间:",
+                info_lunch: "午餐: 上午8:30 - 下午2:00(最后点餐时间 下午1:30)",
+                info_dinner: "晚餐: 下午5:30 - 下午10:00(最后点餐时间 下午9:30)",
+                info_closed: "休息日:",
+                info_closed_value: "每周一",
+                footer_rights: "版权所有。",
+                success_message: "预订提交成功!我们会尽快与您联系确认。",
+                error_message: "提交预订失败。请重试或直接联系我们。",
+                monday_warning: "周一休息。请选择其他日期。",
+                select_time_first: "请先选择午餐或晚餐",
+                fill_required: "请填写所有必填项"
+            },
+            ja: {
+                reservation_title: "予約する",
+                reservation_subtitle: "ZZO LAB でテーブルを予約",
+                name_label: "お名前 *",
+                phone_label: "電話番号 *",
+                email_label: "メールアドレス",
+                date_label: "日付 *",
+                time_label: "時間 *",
+                lunch_time: "ランチ (午前8:30 - 午後1:00)",
+                dinner_time: "ディナー (午後5:30 - 午後8:30)",
+                select_lunch_time: "ランチ時間を選択:",
+                select_dinner_time: "ディナー時間を選択:",
+                guests_label: "人数 *",
+                vip_label: "VIPルーム",
+                vip_no: "いいえ",
+                vip_yes: "はい(要確認)",
+                notes_label: "特別なリクエスト",
+                notes_placeholder: "特別なご要望やアレルギーがございましたらお知らせください",
+                submit_btn: "予約を確定",
+                info_title: "レストラン情報",
+                info_name: "レストラン名:",
+                info_capacity: "収容人数:",
+                info_capacity_value: "20席(テーブル6台 + VIPルーム1室)",
+                info_hours: "営業時間:",
+                info_lunch: "ランチ: 午前8:30 - 午後2:00(ラストオーダー 午後1:30)",
+                info_dinner: "ディナー: 午後5:30 - 午後10:00(ラストオーダー 午後9:30)",
+                info_closed: "定休日:",
+                info_closed_value: "毎週月曜日",
+                footer_rights: "全著作権所有。",
+                success_message: "予約が正常に送信されました!確認のためすぐにご連絡いたします。",
+                error_message: "予約の送信に失敗しました。もう一度お試しいただくか、直接ご連絡ください。",
+                monday_warning: "月曜日は定休日です。別の日をお選びください。",
+                select_time_first: "まずランチまたはディナーを選択してください",
+                fill_required: "すべての必須項目を入力してください"
+            }
+        };
+
+        let currentLang = 'en';
+
+        // Language switching
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentLang = this.dataset.lang;
+                updateLanguage();
+            });
+        });
+
+        function updateLanguage() {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang] && translations[currentLang][key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = translations[currentLang][key];
+                    } else {
+                        el.textContent = translations[currentLang][key];
+                    }
+                }
+            });
+
+            const notesField = document.querySelector('[data-i18n-placeholder]');
+            if (notesField && translations[currentLang]['notes_placeholder']) {
+                notesField.placeholder = translations[currentLang]['notes_placeholder'];
+            }
+        }
+
+        // Generate time slots
+        function generateTimeSlots() {
+            const lunchContainer = document.getElementById('lunchTimeOptions');
+            const dinnerContainer = document.getElementById('dinnerTimeOptions');
+
+            // Lunch times: 8:30 AM - 1:00 PM (30-minute intervals)
+            const lunchTimes = [];
+            for (let hour = 8; hour <= 13; hour++) {
+                for (let min = 0; min < 60; min += 30) {
+                    if (hour === 8 && min === 0) continue; // Skip 8:00
+                    if (hour === 13 && min > 0) break; // Stop after 13:00
+
+                    const time = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+                    const displayHour = hour > 12 ? hour - 12 : hour;
+                    const period = hour >= 12 ? 'PM' : 'AM';
+                    const display = `${displayHour}:${min.toString().padStart(2, '0')} ${period}`;
+                    
+                    lunchTimes.push({ value: time, display: display });
+                }
+            }
+
+            // Dinner times: 5:30 PM - 8:30 PM (30-minute intervals)
+            const dinnerTimes = [];
+            for (let hour = 17; hour <= 20; hour++) {
+                for (let min = 0; min < 60; min += 30) {
+                    if (hour === 17 && min === 0) continue; // Skip 17:00
+                    if (hour === 20 && min > 30) break; // Stop after 20:30
+
+                    const time = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+                    const displayHour = hour > 12 ? hour - 12 : hour;
+                    const display = `${displayHour}:${min.toString().padStart(2, '0')} PM`;
+                    
+                    dinnerTimes.push({ value: time, display: display });
+                }
+            }
+
+            // Create lunch time options
+            lunchTimes.forEach(time => {
+                const div = document.createElement('div');
+                div.className = 'time-option';
+                div.textContent = time.display;
+                div.dataset.time = time.value;
+                div.addEventListener('click', selectSpecificTime);
+                lunchContainer.appendChild(div);
+            });
+
+            // Create dinner time options
+            dinnerTimes.forEach(time => {
+                const div = document.createElement('div');
+                div.className = 'time-option';
+                div.textContent = time.display;
+                div.dataset.time = time.value;
+                div.addEventListener('click', selectSpecificTime);
+                dinnerContainer.appendChild(div);
+            });
+        }
+
+        // Time slot selection
+        document.querySelectorAll('.time-slot').forEach(slot => {
+            slot.addEventListener('click', function() {
+                if (this.classList.contains('disabled')) return;
+
+                document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('active'));
+                this.classList.add('active');
+
+                const timeType = this.dataset.timeType;
+                
+                // Hide all time containers
+                document.querySelectorAll('.specific-time-container').forEach(container => {
+                    container.classList.remove('show');
+                });
+
+                // Show selected time container
+                if (timeType === 'lunch') {
+                    document.getElementById('lunchTimeContainer').classList.add('show');
+                } else if (timeType === 'dinner') {
+                    document.getElementById('dinnerTimeContainer').classList.add('show');
+                }
+
+                // Clear any previously selected specific time
+                document.querySelectorAll('.time-option').forEach(opt => opt.classList.remove('active'));
+                document.getElementById('selectedTime').value = '';
+            });
+        });
+
+        function selectSpecificTime() {
+            document.querySelectorAll('.time-option').forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            document.getElementById('selectedTime').value = this.dataset.time;
+        }
+
+        // Date validation for Mondays
+        const dateInput = document.getElementById('date');
+        const mondayWarning = document.getElementById('mondayWarning');
+
+        dateInput.addEventListener('change', function() {
+            const selectedDate = new Date(this.value + 'T00:00:00');
+            const day = selectedDate.getDay();
+
+            if (day === 1) { // Monday
+                mondayWarning.classList.add('show');
+                this.value = '';
+                // Clear any selected times
+                document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('active'));
+                document.querySelectorAll('.time-option').forEach(opt => opt.classList.remove('active'));
+                document.querySelectorAll('.specific-time-container').forEach(container => {
+                    container.classList.remove('show');
+                });
+                document.getElementById('selectedTime').value = '';
+            } else {
+                mondayWarning.classList.remove('show');
+            }
+        });
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+
+        // Form submission
+        document.getElementById('reservationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const selectedTime = document.getElementById('selectedTime').value;
+            if (!selectedTime) {
+                showAlert('error', translations[currentLang]['select_time_first']);
+                return;
+            }
+
+            const formData = {
+                customer_name: document.getElementById('name').value,
+                customer_phone: document.getElementById('phone').value,
+                customer_email: document.getElementById('email').value || 'Not provided',
+                reservation_date: document.getElementById('date').value,
+                reservation_time: selectedTime,
+                number_of_guests: document.getElementById('guests').value,
+                vip_room: document.getElementById('vipRoom').value === 'yes' ? 'Yes' : 'No',
+                special_requests: document.getElementById('notes').value || 'None'
+            };
+
+            try {
+                const response = await emailjs.send(
+                    'service_lln28o5',
+                    'template_sxiq1ee',
+                    formData
+                );
+
+                if (response.status === 200) {
+                    showAlert('success', translations[currentLang]['success_message']);
+                    this.reset();
+                    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('active'));
+                    document.querySelectorAll('.time-option').forEach(opt => opt.classList.remove('active'));
+                    document.querySelectorAll('.specific-time-container').forEach(container => {
+                        container.classList.remove('show');
+                    });
+                    document.getElementById('selectedTime').value = '';
+                } else {
+                    throw new Error('Email sending failed');
+                }
+            } catch (error) {
+                console.error('EmailJS Error:', error);
+                showAlert('error', translations[currentLang]['error_message']);
+            }
+        });
+
+        function showAlert(type, message) {
+            const alertId = type === 'success' ? 'successAlert' : 'errorAlert';
+            const alertElement = document.getElementById(alertId);
+            alertElement.textContent = message;
+            alertElement.classList.add('show');
+
+            setTimeout(() => {
+                alertElement.classList.remove('show');
+            }, 5000);
+
+            alertElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Initialize
+        generateTimeSlots();
+        updateLanguage();
+    </script>
+</body>
+</html>
